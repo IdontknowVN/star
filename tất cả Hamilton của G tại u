@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int n, u;
+int adj[101][101];
+bool visited[101];
+vector<int> path;
+int cycleCount = 0;
+ofstream out("CT.OUT");
+
+void backtrack(int current, int depth) {
+    if (depth == n) {
+        if (adj[current][u] == 1) {
+            for (int v : path) out << v << " ";
+            out << u << endl;
+            cycleCount++;
+        }
+        return;
+    }
+
+    for (int next = 1; next <= n; next++) {
+        if (!visited[next] && adj[current][next] == 1) {
+            visited[next] = true;
+            path.push_back(next);
+            backtrack(next, depth + 1);
+            path.pop_back();
+            visited[next] = false;
+        }
+    }
+}
+
+int main() {
+    ifstream in("CT.INP");
+    in >> n >> u;
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            in >> adj[i][j];
+        }
+    }
+    in.close();
+    visited[u] = true;
+    path.push_back(u);
+    backtrack(u, 1);
+
+    if (cycleCount == 0) {
+        out << 0 << endl;
+    } else {
+        out << cycleCount << endl;
+    }
+    out.close();
+
+    return 0;
+}
